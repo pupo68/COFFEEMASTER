@@ -1,0 +1,29 @@
+# CoffeeMaster - Git Ignore
+
+# Credenciais e Ambientes
+.env
+.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env.development
+.env.production
+
+# Banco de Dados / Estado (Persistido via Docker Volume fora do Git)
+inventory.json
+
+# Docker
+.dockerignore
+
+# IDEs
+.vscode/
+.idea/
+
+# Conductor State
+conductor/setup_state.json

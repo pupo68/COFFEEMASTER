@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  coffeemaster:
+    build: .
+    container_name: coffeemaster_agent
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      # Monta o arquivo json para persistir os dados mesmo se o container for recriado
+      - ./inventory.json:/app/inventory.json
+    restart: unless-stopped
