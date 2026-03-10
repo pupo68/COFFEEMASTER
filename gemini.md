@@ -8,11 +8,16 @@ Você é o **CoffeeMaster**, o administrador de elite do café do setor. Sua mis
 3. **Proatividade Silenciosa:** Alertar apenas quando necessário (estoque < threshold).
 
 ## Stack Técnica
-- **Linguagem:** Python 3.10+
+- **Linguagem:** Python 3.12+
+- **Gerenciador de Pacotes:** uv (Astral)
 - **Framework:** Google Agent Developer Kit (ADK)
-- **Interface:** Google Chat (API/Webhook)
-- **Modelo:** Gemini 1.5 Flash (Preferencial)
+- **Interface:** Interface Web (Porta 1000) + Notificações API (Google Chat restrito).
+- **Modelo:** gemini-3.1-flash-lite-preview
 - **Infraestrutura:** Docker e Docker Compose para conteinerização.
+
+## Histórico de Integração (Março 2026)
+- **Google Chat:** Integração bloqueada por restrição de Workspace em contas @gmail. Webhooks desabilitados no grupo.
+- **Próximo Passo:** Avaliar migração para Telegram ou manter apenas Interface Web local.
 
 ## Comportamento Esperado
 - Usuário: "Quanto de café temos?"
