@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoffeeMaster - Elite Coffee Admin</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <h1>CoffeeMaster</h1>
+            </div>
+            <div class="header-metrics">
+                <div class="mini-metric">
+                    <span class="metric-value" id="days-left" aria-live="polite">--</span>
+                    <span class="metric-label">dias</span>
+                </div>
+                <div class="status-badge" id="app-status">Online</div>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            <!-- Coluna da Esquerda: Operação e Dashboard -->
+            <div class="content-left">
+                <div class="card inventory-card glass">
+                    <div class="card-header">
+                        <h3>Recursos Atuais</h3>
+                        <button type="button" class="btn-refresh" id="refresh-btn" aria-label="Atualizar estoque">
+                            <span aria-hidden="true">🔄</span>
+                        </button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Pó de Café</span>
+                            <span class="stat-value" id="coffee-powder">--g</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Filtros</span>
+                            <span class="stat-value" id="filters-count">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button type="button" class="btn-action primary" id="daily-prep-btn">☕ EU FIZ O CAFÉ (+10 pts)</button>
+                </div>
+            </div>
+
+            <!-- Coluna da Direita: Inteligência e Gamificação -->
+            <aside class="content-right">
+                <!-- Gamificação: Leaderboard -->
+                <div class="card ranking-card glass">
+                    <div class="card-header">
+                        <h3>Elite Baristas</h3>
+                    </div>
+                    <ul class="ranking-list" id="ranking-list">
+                        <!-- Preenchido via JS -->
+                    </ul>
+                </div>
+
+                <!-- Janela de Chat Copilot -->
+                <section class="chat-section" aria-labelledby="chat-title">
+                    <h2 id="chat-title" class="sr-only">Terminal CoffeeMaster</h2>
+                    <div class="chat-container card glass">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="message bot">
+                                <div class="message-content">Sistemas operacionais. Comande, mestre.</div>
+                            </div>
+                        </div>
+                        <form class="chat-input-area" id="chat-form">
+                            <label for="user-input" class="sr-only">Comando para CoffeeMaster</label>
+                            <input type="text" id="user-input" placeholder="Comando..." required>
+                            <button type="submit" class="btn-send">ENVIAR</button>
+                        </form>
+                    </div>
+                </section>
+            </aside>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 CoffeeMaster Elite Admin. Mantendo o setor acordado.</p>
+        </footer>
+    </div>
+    <script src="script.js" defer></script>
+</body>
+</html>
