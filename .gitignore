@@ -3,6 +3,7 @@
 # Credenciais e Ambientes
 .env
 .env.example
+coffeemaster.json
 
 # Python
 __pycache__/

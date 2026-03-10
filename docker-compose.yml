@@ -1,14 +1,30 @@
-version: '3.8'
-
 services:
-  coffeemaster:
+  # Nossa Interface de Elite (UI Customizada)
+  coffeemaster-web:
     build: .
-    container_name: coffeemaster_agent
+    container_name: coffeemaster_web
     ports:
-      - "8080:8080"
+      - "1000:1000"
     env_file:
       - .env
     volumes:
-      # Monta o arquivo json para persistir os dados mesmo se o container for recriado
-      - ./inventory.json:/app/inventory.json
+      - .:/app
+      - /app/.venv
+      - ./coffeemaster_agent/inventory.json:/app/coffeemaster_agent/inventory.json
+      - ./static:/app/static
+    restart: unless-stopped
+
+  # ADK Web Lab (Interface Oficial para Debug e Testes)
+  adk-lab:
+    build: .
+    container_name: adk_lab
+    ports:
+      - "1001:1001"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/.venv
+      - ./coffeemaster_agent/inventory.json:/app/coffeemaster_agent/inventory.json
+    command: ["uv", "run", "adk", "web", "--port", "1001", "--host", "0.0.0.0"]
     restart: unless-stopped
