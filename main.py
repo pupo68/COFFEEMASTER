@@ -1,31 +1,98 @@
-from fastapi import FastAPI, Request
-from agent import coffee_agent
-from google.adk.runtime.runner import Runner
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from coffeemaster_agent.agent import root_agent
+from coffeemaster_agent.inventory import get_inventory
+from google.adk.apps import App
+from google.adk.runners import Runner
+from google.adk.sessions import DatabaseSessionService
+from google.genai.types import Content, Part
 import uvicorn
-import asyncio
+import os
+from pathlib import Path
 
-app = FastAPI()
-runner = Runner(agent=coffee_agent)
+app = FastAPI(title="CoffeeMaster Web Elite")
 
-@app.post("/")
-async def handle_request(request: Request):
-    event = await request.json()
+# Configuração de Persistência (Padrão Senior)
+DB_PATH = Path("coffeemaster_agent/.adk/session.db")
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+DATABASE_URL = f"sqlite+aiosqlite:///{DB_PATH.absolute()}"
+
+# Configuração da Aplicação ADK
+adk_app = App(
+    name="CoffeeMaster",
+    root_agent=root_agent
+)
+
+# O Runner orquestra a execução da aplicação com auto-gerenciamento de sessão
+session_service = DatabaseSessionService(db_url=DATABASE_URL)
+runner = Runner(
+    app=adk_app, 
+    session_service=session_service,
+    auto_create_session=True
+)
+
+# Modelos de Dados
+class ChatRequest(BaseModel):
+    message: str
+    session_id: str = "web_user"
+
+class ChatResponse(BaseModel):
+    reply: str
+
+# Endpoints da API
+@app.get("/api/inventory")
+async def api_get_inventory():
+    return get_inventory()
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def api_chat(request: ChatRequest):
+    user_id = "web_user"
     
-    # Google Chat Event format
-    # type: MESSAGE, ADDED_TO_SPACE, etc.
-    if event.get("type") == "ADDED_TO_SPACE":
-        return {"text": "CoffeeMaster online. Comandos: status, adicionei 500g, usei 1 filtro."}
-    
-    message = event.get("message", {}).get("text", "")
-    if not message:
-        return {"text": "Aguardando comando."}
-    
-    # Run the ADK Agent
-    response = await runner.run(input_text=message)
-    
-    # Return formatted for Google Chat
-    return {"text": response.output}
+    try:
+        # O Runner agora gerencia a sessão automaticamente (Padrão Sênior ADK)
+        run_result = runner.run(
+            user_id=user_id,
+            session_id=request.session_id,
+            new_message=Content(
+                role="user",
+                parts=[Part(text=request.message)]
+            )
+        )
+        
+        # Acumular todo o texto gerado durante o ciclo de vida da execução (Padrão Senior)
+        accumulated_text = []
+        for event in run_result:
+            # Verifica se o evento contém conteúdo textual do modelo
+            if hasattr(event, 'content') and event.content and event.content.parts:
+                for part in event.content.parts:
+                    if hasattr(part, 'text') and part.text:
+                        accumulated_text.append(part.text)
+            
+            # Caso especial: se o ADK fornecer um atributo direto de texto no evento
+            elif hasattr(event, 'output_text') and event.output_text:
+                accumulated_text.append(event.output_text)
+        
+        reply_text = "".join(accumulated_text).strip()
+        
+        # Se houve processamento mas nenhum texto foi gerado (ex: apenas uso de ferramentas)
+        if not reply_text:
+            reply_text = "Comando processado. Estoque atualizado."
+            
+        return ChatResponse(reply=reply_text)
+        
+    except Exception as e:
+        print(f"Erro CoffeeMaster: {e}")
+        return ChatResponse(reply="ERRO: O terminal de IA encontrou um problema técnico.")
+
+
+# Servir arquivos estáticos (Frontend)
+# Certifique-se de que a pasta 'static' existe
+if not os.path.exists("static"):
+    os.makedirs("static")
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
-    # Para rodar: python main.py
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+    # Porta 1000 conforme diretrizes, reload ativo para desenvolvimento
+    uvicorn.run("main:app", host="0.0.0.0", port=1000, reload=True)
