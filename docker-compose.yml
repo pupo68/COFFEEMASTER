@@ -1,30 +1,45 @@
 services:
-  # Nossa Interface de Elite (UI Customizada)
-  coffeemaster-web:
-    build: .
-    container_name: coffeemaster_web
+  # CoffeeMaster API - Backend de Elite
+  coffeemaster-api:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: coffeemaster_api
     ports:
       - "1000:1000"
     env_file:
       - .env
     volumes:
-      - .:/app
+      - ./backend:/app
       - /app/.venv
-      - ./coffeemaster_agent/inventory.json:/app/coffeemaster_agent/inventory.json
-      - ./static:/app/static
+      - ./backend/coffeemaster_agent/inventory.json:/app/coffeemaster_agent/inventory.json
     restart: unless-stopped
 
-  # ADK Web Lab (Interface Oficial para Debug e Testes)
+  # CoffeeMaster Web - Frontend Desacoplado
+  coffeemaster-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: coffeemaster_web
+    ports:
+      - "80:80"
+    depends_on:
+      - coffeemaster-api
+    restart: unless-stopped
+
+  # ADK Web Lab (Debug e Testes)
   adk-lab:
-    build: .
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: adk_lab
     ports:
       - "1001:1001"
     env_file:
       - .env
     volumes:
-      - .:/app
+      - ./backend:/app
       - /app/.venv
-      - ./coffeemaster_agent/inventory.json:/app/coffeemaster_agent/inventory.json
+      - ./backend/coffeemaster_agent/inventory.json:/app/coffeemaster_agent/inventory.json
     command: ["uv", "run", "adk", "web", "--port", "1001", "--host", "0.0.0.0"]
     restart: unless-stopped
