@@ -5,7 +5,8 @@
 - **Modelo:** Gemini 1.5 Flash - Escolhido pela alta velocidade e excelente custo-benefício (economia de tokens).
 
 ## Desenvolvimento e Execução
-- **Linguagem:** Python 3.10+
+- **Linguagem:** Python 3.12+
+- **Gerenciador de Pacotes:** uv (Astral) - Build otimizado com Docker BuildKit.
 - **API Server:** FastAPI + Uvicorn - Provê o endpoint de webhook para o Google Chat.
 - **Ambiente:** Docker & Docker Compose - Garante portabilidade e isolamento do serviço.
 

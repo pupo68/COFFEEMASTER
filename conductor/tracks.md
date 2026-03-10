@@ -5,4 +5,7 @@ This file tracks all major tracks for the project. Each track has its own detail
 ---
 
 - [ ] **Track: Implementar consumo automatizado de 3L e sistema de rodízio de compras**
-  *Link: [./conductor/tracks/rodizio_consumo_20260308/](./conductor/tracks/rodizio_consumo_20260308/)*
+  *Link: [./tracks/rodizio_consumo_20260308/index.md](./tracks/rodizio_consumo_20260308/)*
+
+- [x] **Track: Interface Web CoffeeMaster (Elite Edition)**
+  *Status: Concluída e Implantada via Docker.*
